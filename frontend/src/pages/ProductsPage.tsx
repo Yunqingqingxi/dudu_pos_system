@@ -4,7 +4,7 @@ import { Plus, Pencil, Trash2, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ImportExportBar } from '@/components/ImportExportBar';
+import { ImportExportBar } from "@/components/ImportExportBar";
 import { ProductDialog } from "@/components/products/ProductDialog";
 import { fetchProducts, deleteProduct } from "@/api/client";
 import type { Product } from "@/types";
@@ -44,15 +44,18 @@ export default function ProductsPage() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         <h1 className="text-xl font-semibold">商品库</h1>
-        <Button onClick={handleAdd} size="sm">
-          <Plus className="mr-1 h-4 w-4" />
-          新增商品
-        </Button>
+        <div className="flex items-center gap-2">
+          <ImportExportBar type="products" onImportDone={() => queryClient.invalidateQueries({ queryKey: ["products"] })} importLabel="导入商品" />
+          <Button onClick={handleAdd} size="sm">
+            <Plus className="mr-1 h-4 w-4" />
+            新增商品
+          </Button>
+        </div>
       </div>
 
-      <div className="relative max-w-sm">
+      <div className="relative w-full sm:max-w-sm">
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           placeholder="搜索品名..."
@@ -65,16 +68,16 @@ export default function ProductsPage() {
       {isLoading ? (
         <div className="py-8 text-center text-muted-foreground">加载中...</div>
       ) : (
-        <div className="rounded-md border">
+        <div className="rounded-md border overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-16">ID</TableHead>
+                <TableHead className="w-12">ID</TableHead>
                 <TableHead>品名</TableHead>
-                <TableHead>规格型号</TableHead>
+                <TableHead className="hidden sm:table-cell">规格型号</TableHead>
                 <TableHead>单位</TableHead>
                 <TableHead className="text-right">参考单价</TableHead>
-                <TableHead className="w-24 text-right">操作</TableHead>
+                <TableHead className="w-20 text-right">操作</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -89,7 +92,7 @@ export default function ProductsPage() {
                   <TableRow key={p.id}>
                     <TableCell className="text-muted-foreground">{p.id}</TableCell>
                     <TableCell className="font-medium">{p.name}</TableCell>
-                    <TableCell>{p.spec || "-"}</TableCell>
+                    <TableCell className="hidden sm:table-cell">{p.spec || "-"}</TableCell>
                     <TableCell>{p.unit}</TableCell>
                     <TableCell className="text-right">{formatCurrency(p.reference_price)}</TableCell>
                     <TableCell className="text-right">

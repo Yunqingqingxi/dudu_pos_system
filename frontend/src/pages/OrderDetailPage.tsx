@@ -38,14 +38,14 @@ export default function OrderDetailPage() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         <div className="flex items-center gap-3">
           <Button variant="ghost" size="icon" onClick={() => navigate("/orders")}>
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <h1 className="text-xl font-semibold">单据详情</h1>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Button onClick={handlePrint}>
             <Printer className="mr-1 h-4 w-4" />
             打印
@@ -57,8 +57,8 @@ export default function OrderDetailPage() {
         </div>
       </div>
 
-      <div className="rounded-md border">
-        <div className="border-b bg-muted/30 px-6 py-4">
+      <div className="rounded-md border overflow-x-auto">
+        <div className="border-b bg-muted/30 px-4 sm:px-6 py-4">
           <div className="flex justify-between items-center">
             <div>
               <span className="text-sm text-muted-foreground">单号：</span>
@@ -70,36 +70,36 @@ export default function OrderDetailPage() {
             </div>
           </div>
         </div>
-        <table className="w-full text-sm">
+        <table className="w-full text-sm min-w-[600px]">
           <thead>
             <tr className="border-b bg-muted/50">
-              <th className="h-10 w-12 px-4 text-left text-xs font-medium text-muted-foreground">行号</th>
-              <th className="h-10 px-4 text-left text-xs font-medium text-muted-foreground">品名</th>
-              <th className="h-10 px-4 text-left text-xs font-medium text-muted-foreground">规格型号</th>
-              <th className="h-10 w-20 px-4 text-left text-xs font-medium text-muted-foreground">单位</th>
-              <th className="h-10 w-20 px-4 text-right text-xs font-medium text-muted-foreground">数量</th>
-              <th className="h-10 w-28 px-4 text-right text-xs font-medium text-muted-foreground">单价（元）</th>
-              <th className="h-10 w-28 px-4 text-right text-xs font-medium text-muted-foreground">金额（元）</th>
-              <th className="h-10 px-4 text-left text-xs font-medium text-muted-foreground">备注</th>
+              <th className="h-10 w-10 px-2 text-left text-xs font-medium text-muted-foreground">#</th>
+              <th className="h-10 px-2 text-left text-xs font-medium text-muted-foreground">品名</th>
+              <th className="h-10 px-2 text-left text-xs font-medium text-muted-foreground hidden sm:table-cell">规格</th>
+              <th className="h-10 w-14 px-2 text-left text-xs font-medium text-muted-foreground">单位</th>
+              <th className="h-10 w-14 px-2 text-right text-xs font-medium text-muted-foreground">数量</th>
+              <th className="h-10 w-20 px-2 text-right text-xs font-medium text-muted-foreground">单价</th>
+              <th className="h-10 w-20 px-2 text-right text-xs font-medium text-muted-foreground">金额</th>
+              <th className="h-10 px-2 text-left text-xs font-medium text-muted-foreground hidden md:table-cell">备注</th>
             </tr>
           </thead>
           <tbody>
             {order.items.map((item) => (
               <tr key={item.id} className="border-b">
-                <td className="px-4 py-2 text-center text-muted-foreground">{item.row_num}</td>
-                <td className="px-4 py-2">{item.product_name}</td>
-                <td className="px-4 py-2">{item.spec || "-"}</td>
-                <td className="px-4 py-2">{item.unit}</td>
-                <td className="px-4 py-2 text-right tabular-nums">{item.qty}</td>
-                <td className="px-4 py-2 text-right tabular-nums">{formatCurrency(item.price)}</td>
-                <td className="px-4 py-2 text-right tabular-nums font-medium">{formatCurrency(item.amount)}</td>
-                <td className="px-4 py-2 text-muted-foreground">{item.remark || "-"}</td>
+                <td className="px-2 py-2 text-center text-muted-foreground">{item.row_num}</td>
+                <td className="px-2 py-2">{item.product_name}</td>
+                <td className="px-2 py-2 hidden sm:table-cell">{item.spec || "-"}</td>
+                <td className="px-2 py-2">{item.unit}</td>
+                <td className="px-2 py-2 text-right tabular-nums">{item.qty}</td>
+                <td className="px-2 py-2 text-right tabular-nums">{formatCurrency(item.price)}</td>
+                <td className="px-2 py-2 text-right tabular-nums font-medium">{formatCurrency(item.amount)}</td>
+                <td className="px-2 py-2 text-muted-foreground hidden md:table-cell">{item.remark || "-"}</td>
               </tr>
             ))}
           </tbody>
         </table>
-        <div className="flex justify-end border-t bg-muted/30 px-6 py-4">
-          <div className="w-72 space-y-1.5 text-sm">
+        <div className="flex justify-end border-t bg-muted/30 px-4 sm:px-6 py-4">
+          <div className="w-64 sm:w-72 space-y-1.5 text-sm">
             <div className="flex justify-between">
               <span className="text-muted-foreground">合计数量：</span>
               <span className="font-semibold tabular-nums">{order.total_qty}</span>
