@@ -9,6 +9,8 @@ import { ImportExportBar } from "@/components/ImportExportBar";
 import { fetchOrders, deleteOrder } from "@/api/client";
 import { formatCurrency, formatDate } from "@/lib/utils";
 
+const PAGE_SIZE = 10;
+
 export default function OrderListPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -16,17 +18,16 @@ export default function OrderListPage() {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [page, setPage] = useState(0);
-  const pageSize = 15;
 
   const { data, isLoading } = useQuery({
     queryKey: ["orders", keyword, startDate, endDate, page],
     queryFn: () =>
-      fetchOrders({ keyword, start: startDate, end: endDate, skip: page * pageSize, limit: pageSize }),
+      fetchOrders({ keyword, start: startDate, end: endDate, skip: page * PAGE_SIZE, limit: PAGE_SIZE }),
   });
 
   const orders = data?.items ?? [];
   const total = data?.total ?? 0;
-  const totalPages = Math.ceil(total / pageSize);
+  const totalPages = Math.ceil(total / PAGE_SIZE);
 
   async function handleDelete(id: number, orderNo: string, e: React.MouseEvent) {
     e.stopPropagation();
@@ -102,7 +103,7 @@ export default function OrderListPage() {
           {totalPages > 1 && (
             <div className="flex items-center justify-center gap-2">
               <Button variant="outline" size="sm" disabled={page === 0} onClick={() => setPage((p) => Math.max(0, p - 1))}>上一页</Button>
-              <span className="text-sm text-muted-foreground">{page + 1} / {totalPages}</span>
+              <span className="text-sm text-muted-foreground">{page + 1} / {totalPages}（共{total}条）</span>
               <Button variant="outline" size="sm" disabled={page >= totalPages - 1} onClick={() => setPage((p) => p + 1)}>下一页</Button>
             </div>
           )}

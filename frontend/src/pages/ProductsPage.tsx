@@ -10,16 +10,21 @@ import { fetchProducts, deleteProduct } from "@/api/client";
 import type { Product } from "@/types";
 import { formatCurrency } from "@/lib/utils";
 
+const PAGE_SIZE = 8;
+
 export default function ProductsPage() {
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [page, setPage] = useState(0);
 
-  const { data: products = [], isLoading } = useQuery({
-    queryKey: ["products", search],
-    queryFn: () => fetchProducts(search),
+  const { data, isLoading } = useQuery({
+    queryKey: ["products", search, page],
+    queryFn: () => fetchProducts(search, page * PAGE_SIZE, PAGE_SIZE),
   });
+
+  const products = data?.items ?? [];
+  const total = data?.total ?? 0;
+  const totalPages = Math.ceil(total / PAGE_SIZE);
 
   const deleteMutation = useMutation({
     mutationFn: deleteProduct,
@@ -42,6 +47,9 @@ export default function ProductsPage() {
     }
   }
 
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+
   return (
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
@@ -60,7 +68,7 @@ export default function ProductsPage() {
         <Input
           placeholder="搜索品名..."
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => { setSearch(e.target.value); setPage(0); }}
           className="pl-9"
         />
       </div>
@@ -68,54 +76,59 @@ export default function ProductsPage() {
       {isLoading ? (
         <div className="py-8 text-center text-muted-foreground">加载中...</div>
       ) : (
-        <div className="rounded-md border overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-12">ID</TableHead>
-                <TableHead>品名</TableHead>
-                <TableHead className="hidden sm:table-cell">规格型号</TableHead>
-                <TableHead>单位</TableHead>
-                <TableHead className="text-right">参考单价</TableHead>
-                <TableHead className="w-20 text-right">操作</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {products.length === 0 ? (
+        <>
+          <div className="rounded-md border overflow-x-auto">
+            <Table>
+              <TableHeader>
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center text-muted-foreground">
-                    暂无商品数据
-                  </TableCell>
+                  <TableHead className="w-12">ID</TableHead>
+                  <TableHead>品名</TableHead>
+                  <TableHead className="hidden sm:table-cell">规格型号</TableHead>
+                  <TableHead>单位</TableHead>
+                  <TableHead className="text-right">参考单价</TableHead>
+                  <TableHead className="w-20 text-right">操作</TableHead>
                 </TableRow>
-              ) : (
-                products.map((p) => (
-                  <TableRow key={p.id}>
-                    <TableCell className="text-muted-foreground">{p.id}</TableCell>
-                    <TableCell className="font-medium">{p.name}</TableCell>
-                    <TableCell className="hidden sm:table-cell">{p.spec || "-"}</TableCell>
-                    <TableCell>{p.unit}</TableCell>
-                    <TableCell className="text-right">{formatCurrency(p.reference_price)}</TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-1">
-                        <Button variant="ghost" size="icon" onClick={() => handleEdit(p)}>
-                          <Pencil className="h-3.5 w-3.5" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleDelete(p.id)}
-                          className="text-destructive hover:text-destructive"
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </Button>
-                      </div>
+              </TableHeader>
+              <TableBody>
+                {products.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={6} className="text-center text-muted-foreground">
+                      暂无商品数据
                     </TableCell>
                   </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </div>
+                ) : (
+                  products.map((p) => (
+                    <TableRow key={p.id}>
+                      <TableCell className="text-muted-foreground">{p.id}</TableCell>
+                      <TableCell className="font-medium">{p.name}</TableCell>
+                      <TableCell className="hidden sm:table-cell">{p.spec || "-"}</TableCell>
+                      <TableCell>{p.unit}</TableCell>
+                      <TableCell className="text-right">{formatCurrency(p.reference_price)}</TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-1">
+                          <Button variant="ghost" size="icon" onClick={() => handleEdit(p)}>
+                            <Pencil className="h-3.5 w-3.5" />
+                          </Button>
+                          <Button variant="ghost" size="icon" onClick={() => handleDelete(p.id)} className="text-destructive hover:text-destructive">
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+
+          {totalPages > 1 && (
+            <div className="flex items-center justify-center gap-2">
+              <Button variant="outline" size="sm" disabled={page === 0} onClick={() => setPage((p) => Math.max(0, p - 1))}>上一页</Button>
+              <span className="text-sm text-muted-foreground">{page + 1} / {totalPages}（共{total}条）</span>
+              <Button variant="outline" size="sm" disabled={page >= totalPages - 1} onClick={() => setPage((p) => p + 1)}>下一页</Button>
+            </div>
+          )}
+        </>
       )}
 
       <ProductDialog

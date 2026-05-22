@@ -29,10 +29,11 @@ export default function OrderNewPage() {
   ]);
   const [remark, setRemark] = useState("");
 
-  const { data: products = [] } = useQuery({
+  const { data: prodData } = useQuery({
     queryKey: ["products", ""],
-    queryFn: () => fetchProducts(""),
+    queryFn: () => fetchProducts("", 0, 200),
   });
+  const products = prodData?.items ?? [];
 
   const createMutation = useMutation({
     mutationFn: createOrder,

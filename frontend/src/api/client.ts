@@ -16,11 +16,11 @@ const api = axios.create({
 
 // ---- Products ----
 
-export async function fetchProducts(search = ""): Promise<Product[]> {
+export async function fetchProducts(search = "", skip = 0, limit = 8): Promise<ListResponse<Product>> {
   const res = await api.get<ListResponse<Product>>("/products", {
-    params: { search, limit: 200 },
+    params: { search, skip, limit },
   });
-  return res.data.items;
+  return res.data;
 }
 
 export async function createProduct(data: {
