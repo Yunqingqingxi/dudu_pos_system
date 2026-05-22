@@ -12,13 +12,21 @@ import (
 	"time"
 
 	webview "github.com/jchv/go-webview2"
+	"golang.org/x/sys/windows"
 )
 
 //go:embed frontend/dist/*
 var distFS embed.FS
 
+func init() {
+	// Declare DPI awareness before any window is created,
+	// otherwise WebView2 renders at 96 DPI and gets blurry on high-DPI displays
+	user32 := windows.NewLazySystemDLL("user32.dll")
+	setDPIAware := user32.NewProc("SetProcessDPIAware")
+	setDPIAware.Call()
+}
+
 func main() {
-	// Set up logging to logs/ folder next to the executable
 	exePath, err := os.Executable()
 	if err != nil {
 		exePath, _ = os.Getwd()
@@ -35,15 +43,11 @@ func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	log.Println("嘟嘟 POS 系统启动中...")
 
-	// Change working directory to the executable's directory
-	// so SQLite database is created next to the exe
 	os.Chdir(baseDir)
 
-	// Initialize database
 	initDB()
 	defer db.Close()
 
-	// Set up HTTP server
 	handler := setupRouter(distFS)
 	server := &http.Server{
 		Addr:         ":8000",
@@ -53,7 +57,6 @@ func main() {
 		IdleTimeout:  60 * time.Second,
 	}
 
-	// Graceful shutdown on Ctrl+C
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM)
 
@@ -64,7 +67,6 @@ func main() {
 		}
 	}()
 
-	// Wait for server to be ready
 	for i := 0; i < 30; i++ {
 		time.Sleep(500 * time.Millisecond)
 		resp, err := http.Get("http://localhost:8000/api/health")
@@ -77,15 +79,16 @@ func main() {
 		}
 	}
 
-	// Open WebView2 desktop window
+	// HintNone allows the window to be freely resized and properly
+	// handles DPI scaling on high-DPI monitors (HintFixed can cause
+	// blur when combined with display scaling)
 	w := webview.New(false)
 	defer w.Destroy()
 	w.SetTitle("嘟嘟 POS 系统")
-	w.SetSize(1280, 820, webview.HintFixed)
+	w.SetSize(1280, 820, webview.HintNone)
 	w.Navigate("http://localhost:8000")
 	w.Run()
 
-	// Shutdown server when window closes
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	server.Shutdown(ctx)
