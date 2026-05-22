@@ -31,7 +31,7 @@ echo [3/3] Creating release package...
 if exist release rmdir /s /q release
 mkdir release
 copy /y "backend\dist\dudu_pos.exe" "release\" >nul
-copy /y "README.md" "release\" >nul
+copy /y "stop.bat" "release\" >nul`r`ncopy /y "README.md" "release\" >nul`r`ncopy /y "stop.bat" "release\" >nul`r`ncopy /y "..\electron\start.vbs" "release\" >nul 2>nul
 
 (
 echo @echo off

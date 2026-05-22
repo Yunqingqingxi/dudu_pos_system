@@ -27,3 +27,5 @@ backend/build/
 backend/dist/
 backend/*.spec
 backend/_hidden_imports.py
+electron/node_modules/
+electron/dist/

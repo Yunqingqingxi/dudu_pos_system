@@ -1,0 +1,35 @@
+{
+  "name": "dudu-pos-desktop",
+  "version": "1.0.0",
+  "description": "嘟嘟 POS 桌面版",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win portable --x64"
+  },
+  "build": {
+    "appId": "com.dudu.pos",
+    "productName": "嘟嘟POS",
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": "portable",
+      "icon": "icon.ico"
+    },
+    "extraResources": [
+      {
+        "from": "../release/dudu_pos.exe",
+        "to": "backend/dudu_pos.exe"
+      }
+    ],
+    "files": [
+      "main.js",
+      "preload.js"
+    ]
+  },
+  "devDependencies": {
+    "electron": "^35.0.0",
+    "electron-builder": "^25.1.8"
+  }
+}
