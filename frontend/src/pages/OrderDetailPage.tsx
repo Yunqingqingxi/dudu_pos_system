@@ -70,30 +70,30 @@ export default function OrderDetailPage() {
             </div>
           </div>
         </div>
-        <table className="w-full text-sm min-w-[600px]">
+        <table className="w-full text-sm min-w-[700px]">
           <thead>
             <tr className="border-b bg-muted/50">
-              <th className="h-10 w-10 px-2 text-left text-xs font-medium text-muted-foreground">#</th>
-              <th className="h-10 px-2 text-left text-xs font-medium text-muted-foreground">品名</th>
-              <th className="h-10 px-2 text-left text-xs font-medium text-muted-foreground hidden sm:table-cell">规格</th>
-              <th className="h-10 w-14 px-2 text-left text-xs font-medium text-muted-foreground">单位</th>
-              <th className="h-10 w-14 px-2 text-right text-xs font-medium text-muted-foreground">数量</th>
-              <th className="h-10 w-20 px-2 text-right text-xs font-medium text-muted-foreground">单价</th>
-              <th className="h-10 w-20 px-2 text-right text-xs font-medium text-muted-foreground">金额</th>
-              <th className="h-10 px-2 text-left text-xs font-medium text-muted-foreground hidden md:table-cell">备注</th>
+              <th className="h-10 px-3 text-center text-sm font-medium text-muted-foreground whitespace-nowrap w-12">#</th>
+              <th className="h-10 px-3 text-center text-sm font-medium text-muted-foreground whitespace-nowrap">品名</th>
+              <th className="h-10 px-3 text-center text-sm font-medium text-muted-foreground whitespace-nowrap hidden sm:table-cell">规格</th>
+              <th className="h-10 px-3 text-center text-sm font-medium text-muted-foreground whitespace-nowrap">单位</th>
+              <th className="h-10 px-3 text-center text-sm font-medium text-muted-foreground whitespace-nowrap">数量</th>
+              <th className="h-10 px-3 text-center text-sm font-medium text-muted-foreground whitespace-nowrap">单价</th>
+              <th className="h-10 px-3 text-center text-sm font-medium text-muted-foreground whitespace-nowrap">金额</th>
+              <th className="h-10 px-3 text-center text-sm font-medium text-muted-foreground whitespace-nowrap hidden md:table-cell">备注</th>
             </tr>
           </thead>
           <tbody>
             {order.items.map((item) => (
               <tr key={item.id} className="border-b">
-                <td className="px-2 py-2 text-center text-muted-foreground">{item.row_num}</td>
-                <td className="px-2 py-2">{item.product_name}</td>
-                <td className="px-2 py-2 hidden sm:table-cell">{item.spec || "-"}</td>
-                <td className="px-2 py-2">{item.unit}</td>
-                <td className="px-2 py-2 text-right tabular-nums">{item.qty}</td>
-                <td className="px-2 py-2 text-right tabular-nums">{formatCurrency(item.price)}</td>
-                <td className="px-2 py-2 text-right tabular-nums font-medium">{formatCurrency(item.amount)}</td>
-                <td className="px-2 py-2 text-muted-foreground hidden md:table-cell">{item.remark || "-"}</td>
+                <td className="px-3 py-2 text-center text-muted-foreground text-base">{item.row_num}</td>
+                <td className="px-3 py-2 text-center text-base">{item.product_name}</td>
+                <td className="px-3 py-2 text-center hidden sm:table-cell text-base">{item.spec || "-"}</td>
+                <td className="px-3 py-2 text-center text-base">{item.unit}</td>
+                <td className="px-3 py-2 text-center tabular-nums text-base">{item.qty}</td>
+                <td className="px-3 py-2 text-center tabular-nums text-base">{formatCurrency(item.price)}</td>
+                <td className="px-3 py-2 text-center tabular-nums font-medium text-base">{formatCurrency(item.amount)}</td>
+                <td className="px-3 py-2 text-center text-muted-foreground hidden md:table-cell text-base">{item.remark || "-"}</td>
               </tr>
             ))}
           </tbody>

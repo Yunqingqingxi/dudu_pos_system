@@ -48,14 +48,14 @@ export function OrderRow({ index, row, products, totalRows, onChange, onRemove }
 
   return (
     <tr className="border-b">
-      <td className="px-3 py-2 text-center text-muted-foreground">{index + 1}</td>
+      <td className="px-3 py-2 text-center text-muted-foreground text-base">{index + 1}</td>
 
       {/* Product name with Combobox */}
-      <td className="px-3 py-2">
+      <td className="px-3 py-2 text-center">
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
             <button
-              className="flex h-9 w-full items-center rounded-md border border-input bg-background px-3 py-1 text-sm text-left shadow-sm hover:bg-accent/50 transition-colors"
+              className="flex h-9 w-full items-center rounded-md border border-input bg-background px-3 py-1 text-base text-left shadow-sm hover:bg-accent/50 transition-colors"
               onClick={() => setOpen(true)}
             >
               <span className={row.product_name ? "" : "text-muted-foreground"}>
@@ -82,7 +82,6 @@ export function OrderRow({ index, row, products, totalRows, onChange, onRemove }
                   .filter((p) =>
                     p.name.toLowerCase().includes(row.product_name.toLowerCase())
                   )
-                  .slice(0, 15)
                   .map((p) => (
                     <CommandItem
                       key={p.id}
@@ -101,26 +100,26 @@ export function OrderRow({ index, row, products, totalRows, onChange, onRemove }
         </Popover>
       </td>
 
-      <td className="px-3 py-2">
+      <td className="px-3 py-2 text-center">
         <Input
-          className="h-8 text-sm border-0 px-0 shadow-none"
+          className="h-8 text-base text-center border-0 px-0 shadow-none"
           value={row.spec}
           onChange={(e) => onChange(row.key, "spec", e.target.value)}
           placeholder="规格"
         />
       </td>
 
-      <td className="px-3 py-2">
+      <td className="px-3 py-2 text-center">
         <Input
-          className="h-8 text-sm border-0 px-0 shadow-none"
+          className="h-8 text-base text-center border-0 px-0 shadow-none"
           value={row.unit}
           onChange={(e) => onChange(row.key, "unit", e.target.value)}
         />
       </td>
 
-      <td className="px-3 py-2 text-right">
+      <td className="px-3 py-2 text-center">
         <Input
-          className="h-8 text-sm text-right border-0 px-0 shadow-none"
+          className="h-8 text-base text-center border-0 px-0 shadow-none"
           type="number"
           min="1"
           value={row.qty}
@@ -128,9 +127,9 @@ export function OrderRow({ index, row, products, totalRows, onChange, onRemove }
         />
       </td>
 
-      <td className={`px-3 py-2 text-right transition-colors duration-500 ${priceFlash ? "bg-yellow-100" : ""}`}>
+      <td className={`px-3 py-2 text-center transition-colors duration-500 ${priceFlash ? "bg-yellow-100" : ""}`}>
         <Input
-          className="h-8 text-sm text-right border-0 px-0 shadow-none bg-transparent"
+          className="h-8 text-base text-center border-0 px-0 shadow-none bg-transparent"
           type="number"
           step="0.01"
           min="0"
@@ -139,13 +138,13 @@ export function OrderRow({ index, row, products, totalRows, onChange, onRemove }
         />
       </td>
 
-      <td className="px-3 py-2 text-right font-medium tabular-nums">
+      <td className="px-3 py-2 text-center font-medium tabular-nums text-base">
         {formatCurrency(amount)}
       </td>
 
-      <td className="px-3 py-2">
+      <td className="px-3 py-2 text-center">
         <Input
-          className="h-8 text-sm border-0 px-0 shadow-none"
+          className="h-8 text-base text-center border-0 px-0 shadow-none"
           value={row.remark}
           onChange={(e) => onChange(row.key, "remark", e.target.value)}
           placeholder="备注"

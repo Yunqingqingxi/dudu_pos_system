@@ -102,6 +102,143 @@ def export_products(fmt: str = Query("csv"), db: Session = Depends(get_db)):
 
 # ---- Export Orders ----
 
+def _build_receipt_xlsx(orders, filename: str) -> StreamingResponse:
+    from openpyxl import Workbook
+    from openpyxl.styles import Font, Alignment, PatternFill, Border, Side, numbers
+    from openpyxl.utils import get_column_letter
+
+    wb = Workbook()
+
+    dark_blue = PatternFill(start_color="1F3864", end_color="1F3864", fill_type="solid")
+    light_blue = PatternFill(start_color="BDD7EE", end_color="BDD7EE", fill_type="solid")
+    white_bold = Font(name="微软雅黑", size=14, bold=True, color="FFFFFF")
+    header_font = Font(name="微软雅黑", size=11, bold=True, color="1F3864")
+    normal_font = Font(name="微软雅黑", size=11)
+    bold_font = Font(name="微软雅黑", size=11, bold=True)
+    center = Alignment(horizontal="center", vertical="center", wrap_text=True)
+    right_align = Alignment(horizontal="right", vertical="center")
+    thin_border = Border(
+        left=Side(style="thin"), right=Side(style="thin"),
+        top=Side(style="thin"), bottom=Side(style="thin"),
+    )
+
+    def fmt_yuan(v):
+        return v  # keep as number for proper formatting
+
+    col_widths = [6, 20, 14, 8, 10, 14, 16, 20]
+    headers = ["行号", "品名", "规格型号", "单位", "数量", "单价（元）", "金额（元）", "备注"]
+    num_cols = len(headers)
+
+    for sheet_idx, o in enumerate(orders):
+        if sheet_idx == 0:
+            ws = wb.active
+            ws.title = o.order_no.replace("/", "-")[:31]
+        else:
+            ws = wb.create_sheet(title=o.order_no.replace("/", "-")[:31])
+
+        # Set column widths
+        for i, w in enumerate(col_widths, 1):
+            ws.column_dimensions[get_column_letter(i)].width = w
+
+        row = 1
+
+        # Title: store name merged
+        ws.merge_cells(start_row=row, start_column=1, end_row=row, end_column=num_cols)
+        cell = ws.cell(row=row, column=1, value="广信区都嘟百货店")
+        cell.fill = dark_blue
+        cell.font = white_bold
+        cell.alignment = center
+        cell.border = thin_border
+        for c in range(2, num_cols + 1):
+            ws.cell(row=row, column=c).fill = dark_blue
+            ws.cell(row=row, column=c).border = thin_border
+        row += 1
+
+        # Order info row
+        ws.merge_cells(start_row=row, start_column=1, end_row=row, end_column=num_cols)
+        cell = ws.cell(row=row, column=1, value=f"单号：{o.order_no}                    日期：{o.order_date}")
+        cell.font = normal_font
+        cell.alignment = Alignment(horizontal="left", vertical="center")
+        cell.border = thin_border
+        for c in range(2, num_cols + 1):
+            ws.cell(row=row, column=c).border = thin_border
+        row += 1
+
+        # Column headers
+        for i, h in enumerate(headers, 1):
+            cell = ws.cell(row=row, column=i, value=h)
+            cell.fill = light_blue
+            cell.font = header_font
+            cell.alignment = center
+            cell.border = thin_border
+        row += 1
+
+        # Data rows
+        for item in o.items:
+            data = [
+                item.row_num, item.product_name, item.spec or "", item.unit,
+                item.qty, item.price, item.amount, item.remark or "",
+            ]
+            for i, val in enumerate(data, 1):
+                cell = ws.cell(row=row, column=i, value=val)
+                cell.font = normal_font
+                cell.alignment = center
+                cell.border = thin_border
+                if i == 5:  # qty
+                    cell.number_format = '0'
+                elif i in (6, 7):  # price, amount
+                    cell.number_format = '#,##0.00'
+            row += 1
+
+        # Total row
+        total_row_data = [
+            ("总计大写", None),
+            (o.amount_cn, 3),
+            (o.total_qty, None),
+            ("合计", None),
+            (o.total_amount, None),
+            ("", None),
+        ]
+        col = 1
+        for val, merge_cols in total_row_data:
+            if merge_cols and merge_cols > 1:
+                ws.merge_cells(start_row=row, start_column=col, end_row=row, end_column=col + merge_cols - 1)
+            cell = ws.cell(row=row, column=col, value=val)
+            cell.font = bold_font
+            cell.alignment = center
+            cell.border = thin_border
+            if col == 5:  # qty
+                cell.number_format = '0'
+            elif col == 7:  # amount
+                cell.number_format = '#,##0.00'
+            if merge_cols and merge_cols > 1:
+                for c in range(col + 1, col + merge_cols):
+                    ws.cell(row=row, column=c).border = thin_border
+            col += merge_cols if merge_cols else 1
+        row += 1
+
+        # Payment row
+        pay_data = [
+            ("收款账户", None), ("", None), ("", None),
+            ("收款金额", None), ("", None),
+            ("优惠金额", None), ("", None), ("", None),
+        ]
+        for i, (val, _) in enumerate(pay_data, 1):
+            cell = ws.cell(row=row, column=i, value=val)
+            cell.font = normal_font
+            cell.alignment = center
+            cell.border = thin_border
+
+    buf = io.BytesIO()
+    wb.save(buf)
+    buf.seek(0)
+    return StreamingResponse(
+        iter([buf.getvalue()]),
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={"Content-Disposition": f"attachment; filename={filename}"},
+    )
+
+
 @router.get("/export/orders")
 def export_orders(
     fmt: str = Query("csv"),
@@ -116,6 +253,14 @@ def export_orders(
         q = q.filter(Order.order_date <= date.fromisoformat(end))
     orders = q.order_by(Order.id).all()
 
+    if not orders:
+        raise HTTPException(status_code=404, detail="没有符合条件的单据")
+
+    ext, fname = _resolve_format(fmt, "orders.csv", "orders.xlsx")
+    if ext == "xlsx":
+        return _build_receipt_xlsx(orders, fname)
+
+    # CSV fallback — flat data export
     headers = ["单号", "日期", "总数量", "总金额", "大写金额", "行号", "品名", "规格", "单位", "数量", "单价", "金额", "备注"]
     rows = []
     for o in orders:
@@ -130,10 +275,6 @@ def export_orders(
                 o.order_no, str(o.order_date), str(o.total_qty), str(o.total_amount), o.amount_cn,
                 "", "", "", "", "", "", "", o.remark,
             ])
-
-    ext, fname = _resolve_format(fmt, "orders.csv", "orders.xlsx")
-    if ext == "xlsx":
-        return _export_xlsx(headers, rows, fname)
     return _export_csv(headers, rows, fname)
 
 

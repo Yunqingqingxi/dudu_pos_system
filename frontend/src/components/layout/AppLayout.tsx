@@ -18,7 +18,7 @@ export function AppLayout() {
         >
           <Menu className="h-5 w-5" />
         </button>
-        <span className="font-semibold text-sm">嘟嘟 POS 系统</span>
+        <span className="font-semibold text-sm">都嘟单据管理系统</span>
       </div>
 
       <main className="pl-0 lg:pl-56 pt-12 lg:pt-0">

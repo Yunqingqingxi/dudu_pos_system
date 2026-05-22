@@ -120,7 +120,7 @@ export default function DashboardPage() {
               <ResponsiveContainer width="100%" height={Math.max(200, topProducts.length * 32)}>
                 <BarChart data={topProducts} layout="vertical" margin={{ top: 5, right: 30, left: 10, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                  <XAxis type="number" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
+                  <XAxis type="number" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" allowDecimals={false} />
                   <YAxis
                     type="category"
                     dataKey="name"

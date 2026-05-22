@@ -81,12 +81,12 @@ export default function ProductsPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-12">ID</TableHead>
-                  <TableHead>品名</TableHead>
-                  <TableHead className="hidden sm:table-cell">规格型号</TableHead>
-                  <TableHead>单位</TableHead>
-                  <TableHead className="text-right">参考单价</TableHead>
-                  <TableHead className="w-20 text-right">操作</TableHead>
+                  <TableHead className="w-12 text-center">ID</TableHead>
+                  <TableHead className="text-center">品名</TableHead>
+                  <TableHead className="text-center hidden sm:table-cell">规格型号</TableHead>
+                  <TableHead className="text-center">单位</TableHead>
+                  <TableHead className="text-center">参考单价</TableHead>
+                  <TableHead className="w-20 text-center">操作</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -99,13 +99,13 @@ export default function ProductsPage() {
                 ) : (
                   products.map((p) => (
                     <TableRow key={p.id}>
-                      <TableCell className="text-muted-foreground">{p.id}</TableCell>
-                      <TableCell className="font-medium">{p.name}</TableCell>
-                      <TableCell className="hidden sm:table-cell">{p.spec || "-"}</TableCell>
-                      <TableCell>{p.unit}</TableCell>
-                      <TableCell className="text-right">{formatCurrency(p.reference_price)}</TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end gap-1">
+                      <TableCell className="text-center text-muted-foreground">{p.id}</TableCell>
+                      <TableCell className="text-center font-medium">{p.name}</TableCell>
+                      <TableCell className="text-center hidden sm:table-cell">{p.spec || "-"}</TableCell>
+                      <TableCell className="text-center">{p.unit}</TableCell>
+                      <TableCell className="text-center">{formatCurrency(p.reference_price)}</TableCell>
+                      <TableCell className="text-center">
+                        <div className="flex justify-center gap-1">
                           <Button variant="ghost" size="icon" onClick={() => handleEdit(p)}>
                             <Pencil className="h-3.5 w-3.5" />
                           </Button>

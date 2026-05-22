@@ -1,11 +1,6 @@
 import { useRef } from "react";
-import { Download, Upload, Database } from "lucide-react";
+import { Download, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { apiBase } from "@/api/client";
 
 interface ImportExportBarProps {
@@ -17,13 +12,12 @@ interface ImportExportBarProps {
 export function ImportExportBar({ type, onImportDone, importLabel }: ImportExportBarProps) {
   const fileRef = useRef<HTMLInputElement>(null);
 
-  const handleExport = (fmt: "csv" | "xlsx") => {
-    const url = `${apiBase}/export/${type}?fmt=${fmt}`;
-    window.open(url, "_blank");
-  };
-
-  const handleExportDb = () => {
-    window.open(`${apiBase}/export/database`, "_blank");
+  const handleExport = () => {
+    const iframe = document.createElement("iframe");
+    iframe.style.display = "none";
+    iframe.src = `${apiBase}/export/${type}?fmt=xlsx`;
+    document.body.appendChild(iframe);
+    setTimeout(() => document.body.removeChild(iframe), 5000);
   };
 
   const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -72,38 +66,10 @@ export function ImportExportBar({ type, onImportDone, importLabel }: ImportExpor
       />
 
       {/* Export */}
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button variant="outline" size="sm">
-            <Download className="mr-1 h-4 w-4" />
-            导出
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-44 p-2" align="end">
-          <div className="space-y-1">
-            <button
-              className="w-full rounded-sm px-2 py-1.5 text-sm text-left hover:bg-accent"
-              onClick={() => handleExport("csv")}
-            >
-              导出 CSV
-            </button>
-            <button
-              className="w-full rounded-sm px-2 py-1.5 text-sm text-left hover:bg-accent"
-              onClick={() => handleExport("xlsx")}
-            >
-              导出 Excel
-            </button>
-            <div className="border-t my-1" />
-            <button
-              className="w-full rounded-sm px-2 py-1.5 text-sm text-left hover:bg-accent flex items-center gap-1"
-              onClick={handleExportDb}
-            >
-              <Database className="h-3.5 w-3.5" />
-              导出数据库 (.db)
-            </button>
-          </div>
-        </PopoverContent>
-      </Popover>
+      <Button variant="outline" size="sm" onClick={handleExport}>
+        <Download className="mr-1 h-4 w-4" />
+        导出 Excel
+      </Button>
     </div>
   );
 }

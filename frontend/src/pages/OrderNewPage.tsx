@@ -109,18 +109,18 @@ export default function OrderNewPage() {
       </div>
 
       <div className="rounded-md border overflow-x-auto">
-        <table className="w-full caption-bottom text-sm min-w-[700px]">
+        <table className="w-full caption-bottom text-base min-w-[780px] table-fixed">
           <thead>
             <tr className="border-b bg-muted/50">
-              <th className="h-10 w-10 px-2 text-left text-xs font-medium text-muted-foreground">#</th>
-              <th className="h-10 px-2 text-left text-xs font-medium text-muted-foreground min-w-[140px]">品名</th>
-              <th className="h-10 w-20 px-2 text-left text-xs font-medium text-muted-foreground">规格</th>
-              <th className="h-10 w-14 px-2 text-left text-xs font-medium text-muted-foreground">单位</th>
-              <th className="h-10 w-16 px-2 text-right text-xs font-medium text-muted-foreground">数量</th>
-              <th className="h-10 w-20 px-2 text-right text-xs font-medium text-muted-foreground">单价</th>
-              <th className="h-10 w-20 px-2 text-right text-xs font-medium text-muted-foreground">金额</th>
-              <th className="h-10 w-24 px-2 text-left text-xs font-medium text-muted-foreground">备注</th>
-              <th className="h-10 w-10 px-2"></th>
+              <th className="h-10 px-3 text-center text-sm font-medium text-muted-foreground" style={{width: '4%'}}>#</th>
+              <th className="h-10 px-3 text-center text-sm font-medium text-muted-foreground" style={{width: '18%'}}>品名</th>
+              <th className="h-10 px-3 text-center text-sm font-medium text-muted-foreground" style={{width: '9%'}}>规格</th>
+              <th className="h-10 px-3 text-center text-sm font-medium text-muted-foreground" style={{width: '6%'}}>单位</th>
+              <th className="h-10 px-3 text-center text-sm font-medium text-muted-foreground" style={{width: '8%'}}>数量</th>
+              <th className="h-10 px-3 text-center text-sm font-medium text-muted-foreground" style={{width: '10%'}}>单价</th>
+              <th className="h-10 px-3 text-center text-sm font-medium text-muted-foreground" style={{width: '13%'}}>金额</th>
+              <th className="h-10 px-3 text-center text-sm font-medium text-muted-foreground" style={{width: '20%'}}>备注</th>
+              <th className="h-10 px-1" style={{width: '4%'}}></th>
             </tr>
           </thead>
           <tbody>

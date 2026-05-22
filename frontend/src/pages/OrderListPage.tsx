@@ -63,11 +63,11 @@ export default function OrderListPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>单号</TableHead>
-                  <TableHead>日期</TableHead>
-                  <TableHead className="text-right hidden sm:table-cell">总数量</TableHead>
-                  <TableHead className="text-right">总金额</TableHead>
-                  <TableHead className="hidden md:table-cell">备注</TableHead>
+                  <TableHead className="text-center">单号</TableHead>
+                  <TableHead className="text-center">日期</TableHead>
+                  <TableHead className="text-center hidden sm:table-cell">总数量</TableHead>
+                  <TableHead className="text-center">总金额</TableHead>
+                  <TableHead className="text-center hidden md:table-cell">备注</TableHead>
                   <TableHead className="w-12"></TableHead>
                   <TableHead className="w-12"></TableHead>
                 </TableRow>
@@ -80,11 +80,11 @@ export default function OrderListPage() {
                 ) : (
                   orders.map((o) => (
                     <TableRow key={o.id} className="cursor-pointer" onClick={() => navigate("/orders/" + o.id)}>
-                      <TableCell className="font-medium">{o.order_no}</TableCell>
-                      <TableCell>{formatDate(o.order_date)}</TableCell>
-                      <TableCell className="text-right tabular-nums hidden sm:table-cell">{o.total_qty}</TableCell>
-                      <TableCell className="text-right tabular-nums">{formatCurrency(o.total_amount)}</TableCell>
-                      <TableCell className="text-muted-foreground max-w-32 truncate hidden md:table-cell">{o.remark || "-"}</TableCell>
+                      <TableCell className="font-medium text-center">{o.order_no}</TableCell>
+                      <TableCell className="text-center">{formatDate(o.order_date)}</TableCell>
+                      <TableCell className="text-center tabular-nums hidden sm:table-cell">{o.total_qty}</TableCell>
+                      <TableCell className="text-center tabular-nums">{formatCurrency(o.total_amount)}</TableCell>
+                      <TableCell className="text-center text-muted-foreground max-w-32 truncate hidden md:table-cell">{o.remark || "-"}</TableCell>
                       <TableCell>
                         <button className="text-muted-foreground hover:text-destructive transition-colors" onClick={(e) => handleDelete(o.id, o.order_no, e)}>
                           <Trash2 className="h-4 w-4" />

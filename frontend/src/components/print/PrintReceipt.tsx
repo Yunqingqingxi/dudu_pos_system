@@ -1,5 +1,9 @@
-import { formatCurrency, formatDate } from "@/lib/utils";
+import { formatDate } from "@/lib/utils";
 import type { Order } from "@/types";
+
+function formatYuan(amount: number): string {
+  return '¥' + amount.toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
 
 interface PrintReceiptProps {
   order: Order;
@@ -8,66 +12,77 @@ interface PrintReceiptProps {
 export function PrintReceipt({ order }: PrintReceiptProps) {
   return (
     <div className="print-only">
-      <div className="max-w-[190mm] mx-auto text-black">
-        {/* Header */}
-        <div className="text-center mb-4">
-          <h2 className="text-lg font-bold">广信区都嘟百货店</h2>
-          <h3 className="text-base font-semibold mt-1">销 售 单</h3>
-        </div>
+      <div className="max-w-[260mm] mx-auto text-black text-base">
 
-        {/* Order info */}
-        <div className="flex justify-between text-sm mb-3 px-2">
-          <span>单号：{order.order_no}</span>
-          <span>日期：{formatDate(order.order_date)}</span>
-        </div>
-
-        {/* Table */}
-        <table className="w-full border-collapse text-sm">
+        <table className="w-full border-collapse table-fixed">
+          {/* Store name title bar */}
           <thead>
-            <tr className="border-y-2 border-black">
-              <th className="py-1.5 px-2 text-center w-10">行号</th>
-              <th className="py-1.5 px-2 text-left">品名</th>
-              <th className="py-1.5 px-2 text-left w-20">规格型号</th>
-              <th className="py-1.5 px-2 text-center w-14">单位</th>
-              <th className="py-1.5 px-2 text-right w-16">数量</th>
-              <th className="py-1.5 px-2 text-right w-20">单价（元）</th>
-              <th className="py-1.5 px-2 text-right w-24">金额（元）</th>
-              <th className="py-1.5 px-2 text-left w-24">备注</th>
+            <tr>
+              <th colSpan={8} className="bg-blue-900 text-white font-bold text-lg py-3 text-center border border-gray-400">
+                广信区都嘟百货店
+              </th>
             </tr>
           </thead>
           <tbody>
-            {order.items.map((item, idx) => (
-              <tr key={item.id} className="border-b border-gray-300">
-                <td className="py-1.5 px-2 text-center">{item.row_num}</td>
-                <td className="py-1.5 px-2">{item.product_name}</td>
-                <td className="py-1.5 px-2">{item.spec || ""}</td>
-                <td className="py-1.5 px-2 text-center">{item.unit}</td>
-                <td className="py-1.5 px-2 text-right">{item.qty}</td>
-                <td className="py-1.5 px-2 text-right">{formatCurrency(item.price)}</td>
-                <td className="py-1.5 px-2 text-right">{formatCurrency(item.amount)}</td>
-                <td className="py-1.5 px-2">{item.remark || ""}</td>
+            {/* Order info row */}
+            <tr>
+              <td colSpan={8} className="py-2 px-2 border border-gray-400">
+                <div className="flex justify-between">
+                  <span>单号：{order.order_no}</span>
+                  <span>日期：{formatDate(order.order_date)}</span>
+                </div>
+              </td>
+            </tr>
+
+            {/* Column headers */}
+            <tr className="bg-blue-100">
+              <th className="py-2 px-2 text-center text-blue-900 font-bold whitespace-nowrap border border-gray-400" style={{width: '5%'}}>行号</th>
+              <th className="py-2 px-2 text-center text-blue-900 font-bold whitespace-nowrap border border-gray-400" style={{width: '17%'}}>品名</th>
+              <th className="py-2 px-2 text-center text-blue-900 font-bold whitespace-nowrap border border-gray-400" style={{width: '11%'}}>规格型号</th>
+              <th className="py-2 px-2 text-center text-blue-900 font-bold whitespace-nowrap border border-gray-400" style={{width: '7%'}}>单位</th>
+              <th className="py-2 px-2 text-center text-blue-900 font-bold whitespace-nowrap border border-gray-400" style={{width: '8%'}}>数量</th>
+              <th className="py-2 px-2 text-center text-blue-900 font-bold whitespace-nowrap border border-gray-400" style={{width: '11%'}}>单价（元）</th>
+              <th className="py-2 px-2 text-center text-blue-900 font-bold whitespace-nowrap border border-gray-400" style={{width: '12%'}}>金额（元）</th>
+              <th className="py-2 px-2 text-center text-blue-900 font-bold whitespace-nowrap border border-gray-400" style={{width: '29%'}}>备注</th>
+            </tr>
+
+            {/* Data rows */}
+            {order.items.map((item) => (
+              <tr key={item.id}>
+                <td className="py-2 px-2 text-center border border-gray-300">{item.row_num}</td>
+                <td className="py-2 px-2 text-center border border-gray-300">{item.product_name}</td>
+                <td className="py-2 px-2 text-center border border-gray-300">{item.spec || ""}</td>
+                <td className="py-2 px-2 text-center border border-gray-300">{item.unit}</td>
+                <td className="py-2 px-2 text-center border border-gray-300">{item.qty}</td>
+                <td className="py-2 px-2 text-center border border-gray-300">{item.price.toFixed(2)}</td>
+                <td className="py-2 px-2 text-center border border-gray-300">{formatYuan(item.amount)}</td>
+                <td className="py-2 px-2 text-center border border-gray-300">{item.remark || ""}</td>
               </tr>
             ))}
+
+            {/* Total row */}
+            <tr className="border-t-2 border-gray-500">
+              <td className="py-2 px-2 text-center border border-gray-300">总计大写</td>
+              <td colSpan={3} className="py-2 px-2 text-center border border-gray-300">{order.amount_cn}</td>
+              <td className="py-2 px-2 text-center border border-gray-300">{order.total_qty}</td>
+              <td className="py-2 px-2 text-center border border-gray-300">合计</td>
+              <td className="py-2 px-2 text-center border border-gray-300">{formatYuan(order.total_amount)}</td>
+              <td className="py-2 px-2 text-center border border-gray-300"></td>
+            </tr>
+
+            {/* Payment info row */}
+            <tr>
+              <td className="py-2 px-2 text-center border border-gray-300">收款账户</td>
+              <td className="py-2 px-2 text-center border border-gray-300"></td>
+              <td className="py-2 px-2 text-center border border-gray-300"></td>
+              <td className="py-2 px-2 text-center border border-gray-300">收款金额</td>
+              <td className="py-2 px-2 text-center border border-gray-300"></td>
+              <td className="py-2 px-2 text-center border border-gray-300">优惠金额</td>
+              <td className="py-2 px-2 text-center border border-gray-300"></td>
+              <td className="py-2 px-2 text-center border border-gray-300"></td>
+            </tr>
           </tbody>
         </table>
-
-        {/* Summary */}
-        <div className="flex justify-end mt-3 text-sm">
-          <div className="w-64 space-y-1.5">
-            <div className="flex justify-between border-b border-gray-300 pb-1">
-              <span>合计数量：</span>
-              <span className="font-semibold">{order.total_qty}</span>
-            </div>
-            <div className="flex justify-between border-b border-gray-300 pb-1">
-              <span>合计金额：</span>
-              <span className="font-semibold">{formatCurrency(order.total_amount)}</span>
-            </div>
-            <div className="flex justify-between pt-1">
-              <span>大写金额：</span>
-              <span className="font-semibold">{order.amount_cn}</span>
-            </div>
-          </div>
-        </div>
 
         {order.remark && (
           <div className="mt-4 text-sm text-gray-600">
