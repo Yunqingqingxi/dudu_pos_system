@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { LayoutDashboard, FileText, Package, PlusCircle, History, X } from "lucide-react";
+import { LayoutDashboard, Package, PlusCircle, History, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -39,13 +39,19 @@ export function Sidebar({ mobileOpen, onClose }: SidebarProps) {
     </nav>
   );
 
+  const brand = (
+    <div className="flex items-center gap-2">
+      <img src="/logo.svg" alt="嘟嘟POS" className="h-8 w-8" />
+      <span className="font-semibold text-sm">嘟嘟 POS 系统</span>
+    </div>
+  );
+
   return (
     <>
       {/* Desktop sidebar */}
       <aside className="hidden lg:flex fixed left-0 top-0 z-40 h-screen w-56 border-r bg-card flex-col">
         <div className="flex h-14 items-center gap-2 border-b px-4">
-          <FileText className="h-5 w-5 text-primary" />
-          <span className="font-semibold text-sm">都嘟单据管理系统</span>
+          {brand}
         </div>
         {nav}
         <div className="border-t p-3 text-xs text-muted-foreground">
@@ -62,10 +68,7 @@ export function Sidebar({ mobileOpen, onClose }: SidebarProps) {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex h-14 items-center justify-between border-b px-4">
-              <div className="flex items-center gap-2">
-                <FileText className="h-5 w-5 text-primary" />
-                <span className="font-semibold text-sm">都嘟单据管理系统</span>
-              </div>
+              {brand}
               <button onClick={onClose} className="p-1 rounded hover:bg-accent">
                 <X className="h-4 w-4" />
               </button>
