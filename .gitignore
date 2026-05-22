@@ -40,3 +40,6 @@ release/
 
 # Binaries
 *.exe
+desktop/rsrc.syso
+desktop/logo.ico
+frontend/make-ico.cjs
