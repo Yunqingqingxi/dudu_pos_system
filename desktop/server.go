@@ -487,8 +487,8 @@ func handleExportOrders(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleExportDatabase(w http.ResponseWriter, r *http.Request) {
-	exePath, _ := os.Executable()
-	dbPath := filepath.Join(filepath.Dir(exePath), "dudu_pos.db")
+	homeDir, _ := os.UserHomeDir()
+	dbPath := filepath.Join(homeDir, "嘟嘟POS", "dudu_pos.db")
 	http.ServeFile(w, r, dbPath)
 }
 
