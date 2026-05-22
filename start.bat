@@ -8,6 +8,7 @@ echo ====================================
 echo.
 
 cd /d "%~dp0"
+if not exist "logs" mkdir logs
 
 if not exist "frontend\dist\index.html" (
     echo [0/2] Frontend not built. Building now...
@@ -29,6 +30,7 @@ echo.
 echo ====================================
 echo   Ready! Open http://localhost:8000
 echo   API docs: http://localhost:8000/docs
+echo   Logs: logs\server.log
 echo ====================================
 echo.
 python -m uvicorn main:app --port 8000 --host 0.0.0.0
