@@ -1,7 +1,7 @@
-﻿from fastapi import FastAPI
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from database import engine, Base
-from routers import products, orders, dashboard
+from routers import products, orders, dashboard, import_export
 
 Base.metadata.create_all(bind=engine)
 
@@ -18,6 +18,7 @@ app.add_middleware(
 app.include_router(products.router)
 app.include_router(orders.router)
 app.include_router(dashboard.router)
+app.include_router(import_export.router)
 
 
 @app.get("/api/health")

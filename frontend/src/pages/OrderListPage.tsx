@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Search, ChevronRight } from "lucide-react";
@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { fetchOrders } from "@/api/client";
+import { ImportExportBar } from '@/components/ImportExportBar';
 import { formatCurrency, formatDate } from "@/lib/utils";
 
 export default function OrderListPage() {
@@ -35,6 +36,7 @@ export default function OrderListPage() {
   return (
     <div className="space-y-4">
       <h1 className="text-xl font-semibold">单据列表</h1>
+        <ImportExportBar type="orders" onImportDone={() => {}} />
 
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-3">

@@ -1,4 +1,4 @@
-﻿import axios from "axios";
+import axios from "axios";
 import type {
   Product,
   Order,
@@ -6,6 +6,8 @@ import type {
   DashboardData,
   ListResponse,
 } from "@/types";
+
+export const apiBase = '/api';
 
 const api = axios.create({
   baseURL: "/api",
