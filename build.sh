@@ -27,6 +27,7 @@ cp backend/*.py release/backend/
 cp backend/requirements.txt release/backend/
 cp -r frontend/dist/* release/frontend/dist/
 cp README.md release/
+cp start.sh release/
 
 cat > release/start.sh << 'STARTEOF'
 #!/bin/bash

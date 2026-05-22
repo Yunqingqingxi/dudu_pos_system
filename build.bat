@@ -26,7 +26,7 @@ echo [3/3] Copying files...
 xcopy /e /i /q "backend\*.py" "release\backend\"
 copy /y "backend\requirements.txt" "release\backend\" >nul
 xcopy /e /i /q "frontend\dist" "release\frontend\dist\"
-copy /y "README.md" "release\" >nul
+copy /y "README.md" "release\" >nul`r`ncopy /y "start.sh" "release\" >nul
 
 :: Create release start.bat
 (
