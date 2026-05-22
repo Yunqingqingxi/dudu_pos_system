@@ -20,3 +20,4 @@ dist/
 Thumbs.db
 
 backend/package-lock.json
+tsconfig.tsbuildinfo

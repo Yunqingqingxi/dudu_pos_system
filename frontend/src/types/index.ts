@@ -1,4 +1,4 @@
-﻿export interface Product {
+export interface Product {
   id: number;
   name: string;
   spec: string;
@@ -53,4 +53,21 @@ export interface DashboardData {
 export interface ListResponse<T> {
   items: T[];
   total: number;
+}
+
+export interface DailySale {
+  date: string;
+  amount: number;
+  orders: number;
+}
+
+export interface TopProduct {
+  name: string;
+  total_qty: number;
+  total_amount: number;
+}
+
+export interface ChartData {
+  daily_sales: DailySale[];
+  top_products: TopProduct[];
 }

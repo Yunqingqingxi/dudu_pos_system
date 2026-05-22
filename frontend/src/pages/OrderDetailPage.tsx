@@ -1,14 +1,15 @@
-﻿import { useParams, useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { Printer, ArrowLeft } from "lucide-react";
+import { useParams, useNavigate } from "react-router-dom";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Printer, ArrowLeft, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PrintReceipt } from "@/components/print/PrintReceipt";
-import { fetchOrder } from "@/api/client";
+import { fetchOrder, deleteOrder } from "@/api/client";
 import { formatCurrency, formatDate } from "@/lib/utils";
 
 export default function OrderDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const { data: order, isLoading } = useQuery({
     queryKey: ["order", id],
@@ -28,23 +29,35 @@ export default function OrderDetailPage() {
     window.print();
   }
 
+  async function handleDelete() {
+    if (confirm("确定要删除该单据吗？此操作不可恢复。")) {
+      await deleteOrder(order!.id);
+      navigate("/orders");
+    }
+  }
+
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between no-print">
+      <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Button variant="ghost" size="icon" onClick={() => navigate("/orders")}>
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <h1 className="text-xl font-semibold">单据详情</h1>
         </div>
-        <Button onClick={handlePrint}>
-          <Printer className="mr-1 h-4 w-4" />
-          打印
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button onClick={handlePrint}>
+            <Printer className="mr-1 h-4 w-4" />
+            打印
+          </Button>
+          <Button variant="destructive" onClick={handleDelete}>
+            <Trash2 className="mr-1 h-4 w-4" />
+            删除
+          </Button>
+        </div>
       </div>
 
-      {/* On-screen view */}
-      <div className="rounded-md border no-print">
+      <div className="rounded-md border">
         <div className="border-b bg-muted/30 px-6 py-4">
           <div className="flex justify-between items-center">
             <div>
@@ -103,7 +116,6 @@ export default function OrderDetailPage() {
         </div>
       </div>
 
-      {/* Print template */}
       <PrintReceipt order={order} />
     </div>
   );

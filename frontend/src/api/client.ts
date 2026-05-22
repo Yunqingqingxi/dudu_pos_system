@@ -1,5 +1,5 @@
 import axios from "axios";
-import type {
+import type { ChartData,
   Product,
   Order,
   OrderItemInput,
@@ -76,5 +76,13 @@ export async function createOrder(data: {
 
 export async function fetchDashboard(): Promise<DashboardData> {
   const res = await api.get<DashboardData>("/dashboard");
+  return res.data;
+}
+
+export async function deleteOrder(id: number): Promise<void> {
+  await api.delete(`/orders/${id}`);
+}
+export async function fetchChartData(): Promise<ChartData> {
+  const res = await api.get<ChartData>("/dashboard/charts");
   return res.data;
 }

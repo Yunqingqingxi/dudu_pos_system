@@ -1,4 +1,4 @@
-﻿from datetime import date, datetime
+from datetime import date, datetime
 from sqlalchemy.orm import Session
 from models import Order, OrderItem
 from schemas import OrderCreate
@@ -134,3 +134,11 @@ def list_orders(
 
 def get_order(db: Session, order_id: int):
     return db.query(Order).filter(Order.id == order_id).first()
+
+def delete_order(db: Session, order_id: int) -> bool:
+    order = db.query(Order).filter(Order.id == order_id).first()
+    if not order:
+        return False
+    db.delete(order)
+    db.commit()
+    return True

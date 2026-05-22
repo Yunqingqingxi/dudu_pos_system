@@ -1,4 +1,4 @@
-﻿import { useState, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
@@ -146,6 +146,7 @@ export default function OrderNewPage() {
                 products={products}
                 onChange={updateRow}
                 onRemove={removeRow}
+                totalRows={rows.length}
               />
             ))}
           </tbody>

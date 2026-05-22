@@ -1,4 +1,4 @@
-﻿from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session
 from models import Product
 from schemas import ProductCreate, ProductUpdate
 
@@ -8,7 +8,7 @@ def list_products(db: Session, search: str = "", skip: int = 0, limit: int = 100
     if search:
         q = q.filter(Product.name.contains(search))
     total = q.count()
-    items = q.order_by(Product.id.desc()).offset(skip).limit(limit).all()
+    items = q.order_by(Product.id.asc()).offset(skip).limit(limit).all()
     return items, total
 
 

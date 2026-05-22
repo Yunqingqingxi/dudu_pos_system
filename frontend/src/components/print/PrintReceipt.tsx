@@ -1,4 +1,4 @@
-﻿import { formatCurrency, formatDate } from "@/lib/utils";
+import { formatCurrency, formatDate } from "@/lib/utils";
 import type { Order } from "@/types";
 
 interface PrintReceiptProps {
@@ -7,7 +7,7 @@ interface PrintReceiptProps {
 
 export function PrintReceipt({ order }: PrintReceiptProps) {
   return (
-    <div className="print-only hidden">
+    <div className="print-only">
       <div className="max-w-[190mm] mx-auto text-black">
         {/* Header */}
         <div className="text-center mb-4">

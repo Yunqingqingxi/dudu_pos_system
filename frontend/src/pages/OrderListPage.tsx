@@ -1,16 +1,17 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { Search, ChevronRight } from "lucide-react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Search, ChevronRight, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { fetchOrders } from "@/api/client";
-import { ImportExportBar } from '@/components/ImportExportBar';
+import { ImportExportBar } from "@/components/ImportExportBar";
+import { fetchOrders, deleteOrder } from "@/api/client";
 import { formatCurrency, formatDate } from "@/lib/utils";
 
 export default function OrderListPage() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [keyword, setKeyword] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -33,12 +34,21 @@ export default function OrderListPage() {
   const total = data?.total ?? 0;
   const totalPages = Math.ceil(total / pageSize);
 
+  async function handleDelete(id: number, orderNo: string, e: React.MouseEvent) {
+    e.stopPropagation();
+    if (confirm(`确定要删除单据 ${orderNo} 吗？`)) {
+      await deleteOrder(id);
+      queryClient.invalidateQueries({ queryKey: ["orders"] });
+    }
+  }
+
   return (
     <div className="space-y-4">
-      <h1 className="text-xl font-semibold">单据列表</h1>
-        <ImportExportBar type="orders" onImportDone={() => {}} />
+      <div className="flex items-center justify-between">
+        <h1 className="text-xl font-semibold">单据列表</h1>
+        <ImportExportBar type="orders" onImportDone={() => queryClient.invalidateQueries({ queryKey: ["orders"] })} />
+      </div>
 
-      {/* Filters */}
       <div className="flex flex-wrap items-center gap-3">
         <div className="relative w-52">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -81,12 +91,13 @@ export default function OrderListPage() {
                   <TableHead className="text-right">总金额</TableHead>
                   <TableHead>备注</TableHead>
                   <TableHead className="w-12"></TableHead>
+                  <TableHead className="w-12"></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {orders.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center text-muted-foreground">
+                    <TableCell colSpan={7} className="text-center text-muted-foreground">
                       暂无单据
                     </TableCell>
                   </TableRow>
@@ -103,6 +114,14 @@ export default function OrderListPage() {
                       <TableCell className="text-right tabular-nums">{formatCurrency(o.total_amount)}</TableCell>
                       <TableCell className="text-muted-foreground max-w-40 truncate">{o.remark || "-"}</TableCell>
                       <TableCell>
+                        <button
+                          className="text-muted-foreground hover:text-destructive transition-colors"
+                          onClick={(e) => handleDelete(o.id, o.order_no, e)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </TableCell>
+                      <TableCell>
                         <ChevronRight className="h-4 w-4 text-muted-foreground" />
                       </TableCell>
                     </TableRow>
@@ -112,7 +131,6 @@ export default function OrderListPage() {
             </Table>
           </div>
 
-          {/* Pagination */}
           {totalPages > 1 && (
             <div className="flex items-center justify-center gap-2">
               <Button

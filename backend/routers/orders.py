@@ -1,8 +1,9 @@
-﻿from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from database import get_db
 from schemas import OrderCreate, OrderResponse, OrderListResponse
 from services import order_service
+from fastapi import HTTPException
 
 router = APIRouter(prefix="/api/orders", tags=["Orders"])
 
@@ -38,3 +39,10 @@ def get_order(order_id: int, db: Session = Depends(get_db)):
     if not order:
         raise HTTPException(status_code=404, detail="单据不存在")
     return order
+
+@router.delete("/{order_id}")
+def delete_order(order_id: int, db: Session = Depends(get_db)):
+    ok = order_service.delete_order(db, order_id)
+    if not ok:
+        raise HTTPException(status_code=404, detail="单据不存在")
+    return {"message": "ok"}
