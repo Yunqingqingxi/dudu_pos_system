@@ -1,7 +1,14 @@
-﻿from sqlalchemy import create_engine
+import sys, os
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, DeclarativeBase
 
-SQLALCHEMY_DATABASE_URL = "sqlite:///./dudu_pos.db"
+# Place .db next to the executable, not inside the PyInstaller temp dir
+if getattr(sys, "frozen", False):
+    DB_DIR = os.path.dirname(sys.executable)
+else:
+    DB_DIR = os.path.dirname(__file__)
+
+SQLALCHEMY_DATABASE_URL = f"sqlite:///{os.path.join(DB_DIR, 'dudu_pos.db')}"
 
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL,

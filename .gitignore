@@ -23,3 +23,7 @@ backend/package-lock.json
 tsconfig.tsbuildinfo
 logs/
 release/
+backend/build/
+backend/dist/
+backend/*.spec
+backend/_hidden_imports.py

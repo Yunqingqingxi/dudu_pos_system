@@ -2,9 +2,9 @@
 chcp 65001 >nul 2>&1
 cls
 
-echo ====================================
-echo   dudu POS - Building release...
-echo ====================================
+echo ============================================
+echo   dudu POS - Full Build Pipeline
+echo ============================================
 echo.
 
 cd /d "%~dp0"
@@ -14,57 +14,55 @@ cd frontend
 call npm install --silent
 call npm run build
 cd ..
+echo   Done.
 echo.
 
-echo [2/3] Creating release folder...
-if exist "release" rmdir /s /q "release"
+echo [2/3] Building standalone executable...
+echo   This may take 1-2 minutes...
+cd backend
+if exist build rmdir /s /q build
+if exist dist rmdir /s /q dist
+pyinstaller --onefile --name dudu_pos --clean --noconfirm --hidden-import uvicorn.logging --hidden-import uvicorn.loops.auto --hidden-import uvicorn.protocols.http.auto --hidden-import uvicorn.protocols.websockets.auto --hidden-import uvicorn.lifespan.on --add-data "../frontend/dist;frontend/dist" main.py >nul 2>&1
+cd ..
+echo   Done.
+echo.
+
+echo [3/3] Creating release package...
+if exist release rmdir /s /q release
 mkdir release
-mkdir release\backend
-mkdir release\logs
+copy /y "backend\dist\dudu_pos.exe" "release\" >nul
+copy /y "README.md" "release\" >nul
 
-echo [3/3] Copying files...
-xcopy /e /i /q "backend\*.py" "release\backend\"
-copy /y "backend\requirements.txt" "release\backend\" >nul
-xcopy /e /i /q "frontend\dist" "release\frontend\dist\"
-copy /y "README.md" "release\" >nul`r`ncopy /y "start.sh" "release\" >nul
-
-:: Create release start.bat
 (
 echo @echo off
 echo chcp 65001 ^>nul 2^>^&1
 echo cls
-echo.
 echo echo ====================================
-echo echo   dudu POS - starting...
+echo echo   dudu POS
 echo echo ====================================
 echo echo.
-echo.
-echo cd /d "%%~dp0"
-echo if not exist "logs" mkdir logs
-echo.
-echo echo [1/2] Installing Python dependencies...
-echo cd backend
-echo pip install -r requirements.txt -q
-echo python seed.py
-echo cd ..
+echo echo Starting server...
+echo start "" "%%~dp0dudu_pos.exe"
 echo echo.
-echo.
-echo echo [2/2] Starting server...
+echo echo Waiting for server...
+echo timeout /t 4 /nobreak ^>nul
+echo start http://localhost:8000
 echo echo.
-echo echo ====================================
-echo echo   Ready! Open http://localhost:8000
-echo echo   API docs: http://localhost:8000/docs
+echo echo =========================================
+echo echo   Open http://localhost:8000
 echo echo   Logs: logs\server.log
-echo echo ====================================
-echo echo.
-echo cd backend
-echo python -m uvicorn main:app --port 8000 --host 0.0.0.0
+echo echo   Close this window to stop server.
+echo echo =========================================
+echo pause
 ) > "release\start.bat"
 
 echo.
-echo ====================================
+echo ============================================
 echo   Build complete!
-echo   Release folder: release\
-echo   Run release\start.bat to launch.
-echo ====================================
+echo   Release: release\dudu_pos.exe (single file)
+echo.
+echo   Copy the entire release\ folder to any
+echo   Windows PC and double-click start.bat.
+echo   No Python installation needed!
+echo ============================================
 pause

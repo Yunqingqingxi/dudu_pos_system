@@ -1,8 +1,11 @@
-import logging
-import os
+import logging, sys, os
 from logging.handlers import RotatingFileHandler
 
-LOG_DIR = os.path.join(os.path.dirname(__file__), "..", "logs")
+if getattr(sys, "frozen", False):
+    LOG_DIR = os.path.join(os.path.dirname(sys.executable), "logs")
+else:
+    LOG_DIR = os.path.join(os.path.dirname(__file__), "..", "logs")
+
 os.makedirs(LOG_DIR, exist_ok=True)
 
 logging.basicConfig(
