@@ -29,3 +29,6 @@ backend/*.spec
 backend/_hidden_imports.py
 electron/node_modules/
 electron/dist/
+desktop/embed/
+desktop/dudu_desktop.exe
+*.exe

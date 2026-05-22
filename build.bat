@@ -9,7 +9,7 @@ echo.
 
 cd /d "%~dp0"
 
-echo [1/3] Building frontend...
+echo [1/4] Building frontend...
 cd frontend
 call npm install --silent
 call npm run build
@@ -17,7 +17,7 @@ cd ..
 echo   Done.
 echo.
 
-echo [2/3] Building standalone executable...
+echo [2/4] Building backend (PyInstaller)...
 echo   This may take 1-2 minutes...
 cd backend
 if exist build rmdir /s /q build
@@ -27,42 +27,38 @@ cd ..
 echo   Done.
 echo.
 
-echo [3/3] Creating release package...
+echo [3/4] Building desktop launcher (Go)...
+cd desktop
+if exist embed rmdir /s /q embed
+mkdir embed
+copy /y "..\backend\dist\dudu_pos.exe" "embed\" >nul
+set GOTOOLCHAIN=local
+go build -ldflags="-s -w -H windowsgui" -o dudu_desktop.exe main.go >nul 2>&1
+cd ..
+echo   Done.
+echo.
+
+echo [4/4] Creating release package...
 if exist release rmdir /s /q release
 mkdir release
-copy /y "backend\dist\dudu_pos.exe" "release\" >nul
-copy /y "stop.bat" "release\" >nul`r`ncopy /y "README.md" "release\" >nul`r`ncopy /y "stop.bat" "release\" >nul`r`ncopy /y "..\electron\start.vbs" "release\" >nul 2>nul
-
+copy /y "desktop\dudu_desktop.exe" "release\嘟嘟POS.exe" >nul
+copy /y "README.md" "release\" >nul
 (
 echo @echo off
 echo chcp 65001 ^>nul 2^>^&1
-echo cls
-echo echo ====================================
-echo echo   dudu POS
-echo echo ====================================
-echo echo.
-echo echo Starting server...
-echo start "" "%%~dp0dudu_pos.exe"
-echo echo.
-echo echo Waiting for server...
-echo timeout /t 4 /nobreak ^>nul
-echo start http://localhost:8000
-echo echo.
-echo echo =========================================
-echo echo   Open http://localhost:8000
-echo echo   Logs: logs\server.log
-echo echo   Close this window to stop server.
-echo echo =========================================
+echo taskkill /f /im 嘟嘟POS.exe ^>nul 2^>^&1
+echo taskkill /f /im dudu_pos.exe ^>nul 2^>^&1
+echo echo 嘟嘟 POS 已停止
 echo pause
-) > "release\start.bat"
-
+) > "release\stop.bat"
+echo   Done.
 echo.
+
 echo ============================================
 echo   Build complete!
-echo   Release: release\dudu_pos.exe (single file)
 echo.
-echo   Copy the entire release\ folder to any
-echo   Windows PC and double-click start.bat.
-echo   No Python installation needed!
+echo   release\嘟嘟POS.exe (single file, ~54 MB)
+echo.
+echo   Double-click to run. No dependencies!
 echo ============================================
 pause
