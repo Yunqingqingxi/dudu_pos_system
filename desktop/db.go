@@ -97,7 +97,7 @@ type WindowGeometry struct {
 }
 
 func loadWindowGeometry() WindowGeometry {
-	geo := WindowGeometry{Width: 1200, Height: 800}
+	geo := WindowGeometry{Width: 2200, Height: 1200}
 	rows, err := db.Query("SELECT key, value FROM settings WHERE key IN ('win_x','win_y','win_w','win_h')")
 	if err != nil {
 		return geo
