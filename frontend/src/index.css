@@ -58,3 +58,12 @@
     size: A4;
   }
 }
+
+
+/* Hide scrollbars globally (still functional) */
+* {
+  scrollbar-width: none;
+}
+*::-webkit-scrollbar {
+  display: none;
+}
