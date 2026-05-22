@@ -1,26 +1,28 @@
-﻿@echo off
-chcp 65001 >nul
+@echo off
+chcp 65001 >nul 2>&1
+cls
+
 echo ====================================
-echo   嘟嘟 POS 系统 - 启动中...
+echo   dudu POS - starting...
 echo ====================================
 echo.
-echo [1/2] 启动后端服务 (Python FastAPI)...
-start "嘟嘟POS-后端" cmd /c "cd /d %~dp0backend && python -m uvicorn main:app --port 8000 --host 0.0.0.0"
+echo [1/2] Starting backend (Python FastAPI)...
+start "dudu-backend" cmd /c "cd /d %~dp0backend && python -m uvicorn main:app --port 8000 --host 0.0.0.0"
 
-echo [2/2] 启动前端服务 (React + Vite)...
-start "嘟嘟POS-前端" cmd /c "cd /d %~dp0frontend && npm run dev"
+echo [2/2] Starting frontend (React + Vite)...
+start "dudu-frontend" cmd /c "cd /d %~dp0frontend && npm run dev"
 
 echo.
-echo 等待服务启动...
+echo Waiting for services to start...
 timeout /t 5 /nobreak >nul
 
 echo.
 echo ====================================
-echo   启动完成!
-echo   前端: http://localhost:5173
-echo   后端: http://localhost:8000
-echo   API文档: http://localhost:8000/docs
+echo   Ready!
+echo   Frontend: http://localhost:5173
+echo   Backend:  http://localhost:8000
+echo   API docs: http://localhost:8000/docs
 echo ====================================
 echo.
-echo 按任意键退出...
+echo Press any key to exit...
 pause >nul
