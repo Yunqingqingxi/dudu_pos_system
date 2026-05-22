@@ -1,4 +1,5 @@
-﻿import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { DialogProvider } from "@/components/dialogs/DialogProvider";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AppLayout } from "@/components/layout/AppLayout";
 import DashboardPage from "@/pages/DashboardPage";
@@ -19,17 +20,19 @@ const queryClient = new QueryClient({
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <Routes>
-          <Route element={<AppLayout />}>
-            <Route path="/" element={<DashboardPage />} />
-            <Route path="/orders/new" element={<OrderNewPage />} />
-            <Route path="/orders" element={<OrderListPage />} />
-            <Route path="/orders/:id" element={<OrderDetailPage />} />
-            <Route path="/products" element={<ProductsPage />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
+      <DialogProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route element={<AppLayout />}>
+              <Route path="/" element={<DashboardPage />} />
+              <Route path="/orders/new" element={<OrderNewPage />} />
+              <Route path="/orders" element={<OrderListPage />} />
+              <Route path="/orders/:id" element={<OrderDetailPage />} />
+              <Route path="/products" element={<ProductsPage />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </DialogProvider>
     </QueryClientProvider>
   );
 }

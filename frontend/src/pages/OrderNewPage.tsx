@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDialog } from "@/components/dialogs/DialogProvider";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -24,6 +25,7 @@ let nextRowKey = 1;
 
 export default function OrderNewPage() {
   const navigate = useNavigate();
+  const dialog = useDialog();
   const [rows, setRows] = useState<RowState[]>([
     { key: nextRowKey++, product_name: "", spec: "", unit: "箱", qty: 1, price: 0, remark: "" },
   ]);
@@ -72,7 +74,7 @@ export default function OrderNewPage() {
   function handleSubmit() {
     const validRows = rows.filter((r) => r.product_name.trim() && r.qty > 0);
     if (validRows.length === 0) {
-      alert("请至少填写一行商品信息");
+      dialog.alert("提示", "请至少填写一行商品信息");
       return;
     }
     createMutation.mutate({

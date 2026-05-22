@@ -1,4 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
+import { useDialog } from "@/components/dialogs/DialogProvider";
 import { createPortal } from "react-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Printer, ArrowLeft, Trash2 } from "lucide-react";
@@ -10,6 +11,7 @@ import { formatCurrency, formatDate } from "@/lib/utils";
 export default function OrderDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const dialog = useDialog();
   const queryClient = useQueryClient();
 
   const { data: order, isLoading } = useQuery({
@@ -31,7 +33,8 @@ export default function OrderDetailPage() {
   }
 
   async function handleDelete() {
-    if (confirm("确定要删除该单据吗？此操作不可恢复。")) {
+    const ok = await dialog.confirm("删除单据", "确定要删除该单据吗？此操作不可恢复。");
+      if (ok) {
       await deleteOrder(order!.id);
       navigate("/orders");
     }

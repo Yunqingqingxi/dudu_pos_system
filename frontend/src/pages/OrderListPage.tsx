@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDialog } from "@/components/dialogs/DialogProvider";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Search, ChevronRight, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -13,6 +14,7 @@ const PAGE_SIZE = 10;
 
 export default function OrderListPage() {
   const navigate = useNavigate();
+  const dialog = useDialog();
   const queryClient = useQueryClient();
   const [keyword, setKeyword] = useState("");
   const [startDate, setStartDate] = useState("");
@@ -31,7 +33,8 @@ export default function OrderListPage() {
 
   async function handleDelete(id: number, orderNo: string, e: React.MouseEvent) {
     e.stopPropagation();
-    if (confirm("确定要删除单据 " + orderNo + " 吗？")) {
+    const ok = await dialog.confirm("删除单据", "确定要删除单据 " + orderNo + " 吗？");
+        if (ok) {
       await deleteOrder(id);
       queryClient.invalidateQueries({ queryKey: ["orders"] });
     }

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ImportExportBar } from "@/components/ImportExportBar";
+import { useDialog } from "@/components/dialogs/DialogProvider";
 import { ProductDialog } from "@/components/products/ProductDialog";
 import { fetchProducts, deleteProduct } from "@/api/client";
 import type { Product } from "@/types";
@@ -14,6 +15,7 @@ const PAGE_SIZE = 8;
 
 export default function ProductsPage() {
   const queryClient = useQueryClient();
+  const dialog = useDialog();
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(0);
 
@@ -41,8 +43,9 @@ export default function ProductsPage() {
     setDialogOpen(true);
   }
 
-  function handleDelete(id: number) {
-    if (confirm("确定要删除该商品吗？")) {
+  async function handleDelete(id: number) {
+    const ok = await dialog.confirm("删除商品", "确定要删除该商品吗？");
+      if (ok) {
       deleteMutation.mutate(id);
     }
   }

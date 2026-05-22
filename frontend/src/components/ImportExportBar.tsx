@@ -1,5 +1,6 @@
 import { useRef } from "react";
 import { Download, Upload } from "lucide-react";
+import { useDialog } from "@/components/dialogs/DialogProvider";
 import { Button } from "@/components/ui/button";
 import { apiBase } from "@/api/client";
 
@@ -11,6 +12,7 @@ interface ImportExportBarProps {
 
 export function ImportExportBar({ type, onImportDone, importLabel }: ImportExportBarProps) {
   const fileRef = useRef<HTMLInputElement>(null);
+  const dialog = useDialog();
 
   const handleExport = () => {
     const iframe = document.createElement("iframe");
@@ -34,13 +36,13 @@ export function ImportExportBar({ type, onImportDone, importLabel }: ImportExpor
       });
       const data = await res.json();
       if (res.ok) {
-        alert(data.message);
+        dialog.alert("导入成功", data.message);
         onImportDone();
       } else {
-        alert(data.detail || "导入失败");
+        dialog.alert("导入失败", data.detail || "导入失败");
       }
     } catch {
-      alert("导入失败，请检查网络连接");
+      dialog.alert("导入失败", "请检查网络连接");
     }
 
     e.target.value = "";
@@ -48,7 +50,6 @@ export function ImportExportBar({ type, onImportDone, importLabel }: ImportExpor
 
   return (
     <div className="flex items-center gap-2">
-      {/* Import */}
       <Button
         variant="outline"
         size="sm"
@@ -65,7 +66,6 @@ export function ImportExportBar({ type, onImportDone, importLabel }: ImportExpor
         onChange={handleImport}
       />
 
-      {/* Export */}
       <Button variant="outline" size="sm" onClick={handleExport}>
         <Download className="mr-1 h-4 w-4" />
         导出 Excel
