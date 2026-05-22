@@ -1,6 +1,7 @@
 package main
 
 import (
+	"unsafe"
 	"context"
 	"embed"
 	"log"
@@ -79,17 +80,32 @@ func main() {
 		}
 	}
 
+	// Load saved window position, default 1200x800
+	geo := loadWindowGeometry()
 	opts := webview.WebViewOptions{
 		WindowOptions: webview.WindowOptions{
 			Title:  "嘟嘟 POS 系统",
-			Width:  1280,
-			Height: 820,
-			IconId: 1,  // Load icon from embedded resource (rsrc.syso)
-			Center: true,
+			Width:  uint(geo.Width),
+			Height: uint(geo.Height),
+			IconId: 1,
+			Center: geo.X == 0 && geo.Y == 0,
 		},
 	}
 	w := webview.NewWithOptions(opts)
 	defer w.Destroy()
+
+	// Restore window position if saved
+	if geo.X != 0 || geo.Y != 0 {
+		w.Dispatch(func() {
+			user32 := windows.NewLazySystemDLL("user32.dll")
+			setWindowPos := user32.NewProc("SetWindowPos")
+			hwnd := uintptr(w.Window())
+			const SWP_NOSIZE = 0x0001
+			const HWND_TOP = 0
+			setWindowPos.Call(hwnd, HWND_TOP, uintptr(geo.X), uintptr(geo.Y), 0, 0, SWP_NOSIZE)
+		})
+	}
+
 	w.Navigate("http://localhost:8000")
 
 	// Explicitly set window icon via WM_SETICON to ensure
@@ -125,7 +141,34 @@ func main() {
 		sendMessage.Call(hwnd, WM_SETICON, ICON_SMALL, hicon)
 		sendMessage.Call(hwnd, WM_SETICON, ICON_BIG, hicon)
 	})
+	// Periodically save window geometry (every 5s) so position
+	// is persisted even if the app is killed unexpectedly
+	stopSaver := make(chan struct{})
+	go func() {
+		ticker := time.NewTicker(5 * time.Second)
+		defer ticker.Stop()
+		for {
+			select {
+			case <-ticker.C:
+				w.Dispatch(func() {
+					user32 := windows.NewLazySystemDLL("user32.dll")
+					getWindowRect := user32.NewProc("GetWindowRect")
+					hwnd := uintptr(w.Window())
+					var rect struct{ Left, Top, Right, Bottom int32 }
+					ret, _, _ := getWindowRect.Call(hwnd, uintptr(unsafe.Pointer(&rect)))
+					if ret != 0 {
+						saveWindowGeometry(int(rect.Left), int(rect.Top),
+							int(rect.Right-rect.Left), int(rect.Bottom-rect.Top))
+					}
+				})
+			case <-stopSaver:
+				return
+			}
+		}
+	}()
+
 	w.Run()
+	close(stopSaver)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
