@@ -40,17 +40,21 @@
 
 /* Print styles */
 @media print {
-  body * {
-    visibility: hidden;
+  html, body {
+    width: 100%;
+    height: auto;
+    margin: 0;
+    padding: 0;
+    background: white;
   }
-  .print-only,
-  .print-only * {
-    visibility: visible;
+  /* Hide all regular page content */
+  body > *:not(#print-root) {
+    display: none !important;
   }
-  .print-only {
-    position: absolute;
-    left: 0;
-    top: 0;
+  /* Show only the print portal */
+  #print-root {
+    display: block !important;
+    position: static !important;
     width: 100%;
   }
   @page {

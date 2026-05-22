@@ -1,4 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
+import { createPortal } from "react-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Printer, ArrowLeft, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -116,7 +117,10 @@ export default function OrderDetailPage() {
         </div>
       </div>
 
-      <PrintReceipt order={order} />
+      {createPortal(
+        <PrintReceipt order={order} />,
+        document.getElementById("print-root") || document.body
+      )}
     </div>
   );
 }
