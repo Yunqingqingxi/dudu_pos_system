@@ -27,7 +27,7 @@ echo [3/3] Building desktop app (Go + WebView2)...
 cd desktop
 set GOTOOLCHAIN=local
 set GOPROXY=https://goproxy.cn,direct
-go build -ldflags="-s -w -H windowsgui" -o dudu_desktop.exe . >nul 2>&1
+go build -ldflags="-s -w -H windowsgui" -o dudu_desktop.exe .
 if %ERRORLEVEL% neq 0 (
     echo   BUILD FAILED!
     cd ..
@@ -58,7 +58,7 @@ echo.
 echo ============================================
 echo   Build complete!
 echo.
-echo   release\嘟嘟POS.exe (single file, ~16 MB)
+echo   release\嘟嘟POS.exe
 echo.
 echo   Double-click to run. No dependencies!
 echo ============================================

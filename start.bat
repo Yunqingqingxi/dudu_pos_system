@@ -9,7 +9,6 @@ echo.
 
 cd /d "%~dp0"
 
-:: Check if production build exists
 if exist "release\嘟嘟POS.exe" (
     echo 启动生产版本...
     start "" "release\嘟嘟POS.exe"
@@ -18,7 +17,6 @@ if exist "release\嘟嘟POS.exe" (
     exit
 )
 
-:: Check if desktop build exists
 if exist "desktop\dudu_desktop.exe" (
     echo 启动开发版本...
     start "" "desktop\dudu_desktop.exe"
@@ -27,7 +25,6 @@ if exist "desktop\dudu_desktop.exe" (
     exit
 )
 
-:: Fallback: build from source
 echo 未找到已编译版本，正在构建...
 echo.
 

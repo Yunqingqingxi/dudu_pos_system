@@ -8,7 +8,6 @@ echo ""
 
 cd "$(dirname "$0")"
 
-# Check if production build exists
 if [ -f "release/嘟嘟POS" ]; then
     echo "启动生产版本..."
     ./release/嘟嘟POS &
@@ -16,7 +15,6 @@ if [ -f "release/嘟嘟POS" ]; then
     exit 0
 fi
 
-# Check if desktop build exists
 if [ -f "desktop/dudu_desktop" ]; then
     echo "启动开发版本..."
     ./desktop/dudu_desktop &
@@ -24,7 +22,6 @@ if [ -f "desktop/dudu_desktop" ]; then
     exit 0
 fi
 
-# Fallback: build from source
 echo "未找到已编译版本，正在构建..."
 echo ""
 
