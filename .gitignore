@@ -1,4 +1,4 @@
-﻿# Python
+# Python
 __pycache__/
 *.py[cod]
 *.db
@@ -18,3 +18,5 @@ dist/
 # OS
 .DS_Store
 Thumbs.db
+
+backend/package-lock.json
