@@ -13,8 +13,11 @@ import (
 var db *sql.DB
 
 func initDB() {
-	exePath, _ := os.Executable()
-	dbDir := filepath.Dir(exePath)
+	// Store data in user home directory to avoid accidental deletion
+	// when moving/deleting the exe folder
+	homeDir, _ := os.UserHomeDir()
+	dbDir := filepath.Join(homeDir, "嘟嘟POS")
+	os.MkdirAll(dbDir, 0755)
 	os.MkdirAll(filepath.Join(dbDir, "logs"), 0755)
 
 	var err error
